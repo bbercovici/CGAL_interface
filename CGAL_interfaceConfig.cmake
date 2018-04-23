@@ -30,5 +30,4 @@ else()
 	message(FATAL_ERROR "Unsupported platform")
 endif()
 
-message("${CGAL_interface_INCLUDE_FILE}")
 message("-- Found CGAL_interface: " ${CGAL_interface_LIBRARY})
