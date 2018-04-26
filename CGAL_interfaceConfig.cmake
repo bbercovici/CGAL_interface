@@ -20,12 +20,23 @@
 # SOFTWARE.
 #
 
-set(CGAL_interface_INCLUDE_DIR /usr/local/include/CGAL_interface/)
+
+
+if(${IS_FORTUNA})
+	set(CGAL_interface_INCLUDE_DIR /home/bebe0705/libs/local/include/CGAL_interface)
+else()
+	set(CGAL_interface_INCLUDE_DIR /usr/local/include/CGAL_interface/)
+endif()
 
 if (APPLE)
 	set(CGAL_interface_LIBRARY /usr/local/lib/libCGAL_interface.dylib)
 elseif(UNIX AND NOT APPLE)
-	set(CGAL_interface_LIBRARY /usr/local/lib/libCGAL_interface.so)
+	if(${IS_FORTUNA})
+		set(CGAL_interface_LIBRARY /home/bebe0705/libs/local/lib/libCGAL_interface.so)
+	else()
+		set(CGAL_interface_LIBRARY /usr/local/lib/libCGAL_interface.so)
+	endif()
+
 else()
 	message(FATAL_ERROR "Unsupported platform")
 endif()
