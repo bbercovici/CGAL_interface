@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-set(CGAL_interface_INCLUDE_FILE /usr/local/include/CGAL_interface.hpp)
+set(CGAL_interface_INCLUDE_DIR /usr/local/include/CGAL_interface/)
 
 if (APPLE)
 	set(CGAL_interface_LIBRARY /usr/local/lib/libCGAL_interface.dylib)

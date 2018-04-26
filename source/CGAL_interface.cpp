@@ -1,4 +1,4 @@
-// MIT License
+MIT License
 
 // Copyright (c) 2018 Benjamin Bercovici and Jay McMahon
 
@@ -23,7 +23,6 @@
 
 
 #include "CGAL_interface.hpp"
-
 
 void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     unsigned int N_edges) {
@@ -98,18 +97,16 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
 
 
 
+    #if CGAL_VERSION_NR == 1041111000
 
-    // #if CGAL_VERSION_NR == 1041001000
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(), 6 );
 
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(),
-     6 );
+    #else
 
-    // #else
+    FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
+        6 );
 
-    // FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
-    //     6 );
-
-    // #endif
+    #endif
 
 
     // Gets one point inside the implicit surface

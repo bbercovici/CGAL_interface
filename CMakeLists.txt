@@ -99,7 +99,7 @@ cmake_minimum_required(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.0)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/source/cmake)
 
 # Enable C++17 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 # Compiler flags
 add_definitions(-Wall -O2)
@@ -134,7 +134,7 @@ target_link_libraries(${LIB_NAME} ${library_dependencies})
 # Installing
 if (NOT ${IS_FORTUNA})
 	install (TARGETS ${LIB_NAME} DESTINATION /usr/local/lib)
-	install (FILES ${PROJECT_SOURCE_DIR}/include/CGAL_interface.hpp DESTINATION /usr/local/include/)
+	install (FILES ${PROJECT_SOURCE_DIR}/include/CGAL_interface.hpp DESTINATION /usr/local/include/CGAL_interface/)
 	install (FILES ${PROJECT_SOURCE_DIR}/CGAL_interfaceConfig.cmake DESTINATION /usr/local/share/CGAL_interface/)
 else()
 	install (TARGETS ${LIB_NAME} DESTINATION /home/bebe0705/libs/local/lib)
