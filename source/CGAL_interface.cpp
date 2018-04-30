@@ -32,6 +32,7 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     FT sm_radius = 10; // Max triangle size w.r.t. point set average spacing.
     FT sm_distance = 10; // Surface Approximation error w.r.t. point set average spacing.
 
+    std::cout << " ---  Reading input file... \n";
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
@@ -65,6 +66,8 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
        nb_neighbors);
 
     points.clear();
+    std::cout << " ---  Forming point/normal pairs... \n";
+
     for (auto iter = points_to_orient.begin(); iter != points_to_orient.end(); ++ iter) {
 
         double x = iter -> first.x();
@@ -85,6 +88,9 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
+
+    std::cout << " ---  Computing the implicit function... \n";
+
     Poisson_reconstruction_function function(points.begin(), points.end(),
         CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()) );
 
@@ -122,6 +128,9 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     Surface_3 surface(function,
       Sphere(inner_point, sm_sphere_radius * sm_sphere_radius),
       sm_dichotomy_error / sm_sphere_radius);
+
+    std::cout << " ---  Making the surface mesh... \n";
+
 
     // Defines surface mesh generation criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
