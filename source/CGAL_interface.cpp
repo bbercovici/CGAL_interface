@@ -103,7 +103,7 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
 
 
 
-    #if CGAL_VERSION_NR == 1041111000
+    #if CGAL_VERSION_NR == 1041111000 || CGAL_VERSION_NR == 1041101000
 
     FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(), 6 );
 

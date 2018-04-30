@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2018 Benjamin Bercovici and Jay McMahon
+# Copyright (c) 2018 Benjamin Bercovici
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -78,10 +78,7 @@ else()
 		else()# no OMP-compliant compiler was found on this mac. 
 		message("No OMP-compliant compiler was found on this Mac.")
 	endif()
-	else() # Running on Linux. Will switch back to compiler in /usr/local/bin
-	message("Switching to /usr/local/gcc ")
-	set(CMAKE_C_COMPILER "/usr/local/bin/gcc" CACHE STRING "C Compiler" FORCE)
-	set(CMAKE_CXX_COMPILER "/usr/local/bin/g++" CACHE STRING "C++ Compiler" FORCE)
+	
 endif()
 endif()
 
