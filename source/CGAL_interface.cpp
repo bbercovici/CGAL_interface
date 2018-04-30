@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2018 Benjamin Bercovici and Jay McMahon
+// Copyright (c) 2018 Benjamin Bercovici
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -173,7 +173,7 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
 
 
 
-   std::cout << "Simplifying mesh..." << std::endl;
+   std::cout << " --- Simplifying mesh..." << std::endl;
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
@@ -187,7 +187,7 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     .get_placement(SMS::Midpoint_placement<Polyhedron>())
     );
 
-   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+   std::cout << "\n --- Finished...\n" << r << " edges removed.\n --- " 
    << (output_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
    CGAL::print_polyhedron_wavefront(ofs, output_mesh);
