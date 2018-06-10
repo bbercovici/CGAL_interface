@@ -39,10 +39,8 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     PointList points;
 
-    std::string input_path_string(input_path);
 
-
-    std::ifstream stream(input_path_string);
+    std::ifstream stream(input_path);
 
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(
@@ -50,7 +48,7 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
             std::back_inserter(points),
             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())))
     {
-        throw (std::runtime_error("Error: cannot read file " + input_path_string));
+        throw (std::runtime_error("Error: cannot read file "));
 
     }
 
@@ -154,8 +152,8 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
         throw (std::runtime_error("Number of vertices equated 0"));
 
     // saves reconstructed surface mesh
-    std::string savepath_string(savepath);
-    std::ofstream ofs(savepath_string);
+    // std::string savepath_string(savepath);
+    std::ofstream ofs(savepath);
     std::ofstream ofs_before_decimation("../output/shape_model/apriori.obj");
 
     Polyhedron output_mesh;
