@@ -51,6 +51,9 @@ set (OMP_FRIENDLY_GCC_MAJOR_VERSION 7)
 #
 ################################################################################
 
+cmake_minimum_required(VERSION 3.0.0)
+
+
 if (EXISTS /home/bebe0705/.am_fortuna)
 	set(IS_FORTUNA ON)
 	message("-- This is Fortuna")
@@ -60,30 +63,19 @@ else()
 	message("-- This is not Fortuna")
 endif()
 
+if (${USE_GCC})
+	include(cmake/FindOmpGcc.cmake)
+else()
+	set(CMAKE_C_COMPILER /usr/bin/gcc CACHE STRING "C Compiler" FORCE)
+	set(CMAKE_CXX_COMPILER /usr/bin/g++ CACHE STRING "C++ Compiler" FORCE)
+endif()
+
 
 # Building procedure
 get_filename_component(dirName ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 set(LIB_NAME CGAL_interface CACHE STRING "Name of library to be created.")
 
-if (${IS_FORTUNA})
-	set(CMAKE_C_COMPILER "/usr/local/bin/gcc" CACHE STRING "C Compiler" FORCE)
-	set(CMAKE_CXX_COMPILER "/usr/local/bin/g++" CACHE STRING "C++ Compiler" FORCE)
-else()
-	if(APPLE)
-		if(EXISTS ${OMP_FRIENDLY_GCC_PATH}) # Else running on a MAC. Will attempt to switch compiler to get the OMP-friendly GCC 6.3.0_1 from Homebrew
-		message("Switching to OMP-friendly GCC ")
-		set(CMAKE_C_COMPILER ${OMP_FRIENDLY_GCC_PATH}gcc-${OMP_FRIENDLY_GCC_MAJOR_VERSION} CACHE STRING "C Compiler" FORCE)
-		set(CMAKE_CXX_COMPILER ${OMP_FRIENDLY_GCC_PATH}g++-${OMP_FRIENDLY_GCC_MAJOR_VERSION} CACHE STRING "C++ Compiler" FORCE)
-
-		else()# no OMP-compliant compiler was found on this mac. 
-		message("No OMP-compliant compiler was found on this Mac.")
-	endif()
-	
-endif()
-endif()
-
 project(${LIB_NAME})
-cmake_minimum_required(VERSION 3.0.0)
 
 
 # Specify the version used
@@ -132,10 +124,10 @@ target_link_libraries(${LIB_NAME} ${library_dependencies})
 if (NOT ${IS_FORTUNA})
 	install (TARGETS ${LIB_NAME} DESTINATION /usr/local/lib)
 	install (FILES ${PROJECT_SOURCE_DIR}/include/CGAL_interface.hpp DESTINATION /usr/local/include/CGAL_interface/)
-	install (FILES ${PROJECT_SOURCE_DIR}/CGAL_interfaceConfig.cmake DESTINATION /usr/local/share/CGAL_interface/)
+	install (FILES ${PROJECT_SOURCE_DIR}/cmake/CGAL_interfaceConfig.cmake DESTINATION /usr/local/share/CGAL_interface/)
 else()
 	install (TARGETS ${LIB_NAME} DESTINATION /home/bebe0705/libs/local/lib)
 	install (FILES ${PROJECT_SOURCE_DIR}/include/CGAL_interface.hpp DESTINATION /home/bebe0705/libs/local/include/CGAL_interface/)
-	install (FILES ${PROJECT_SOURCE_DIR}/CGAL_interfaceConfig.cmake DESTINATION /home/bebe0705/libs/local/lib/cmake/CGAL_interface/)
+	install (FILES ${PROJECT_SOURCE_DIR}/cmake/CGAL_interfaceConfig.cmake DESTINATION /home/bebe0705/libs/local/lib/cmake/CGAL_interface/)
 endif()
 

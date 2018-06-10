@@ -88,7 +88,7 @@ to the specified file
 @param savepath path to where the file should be saved
 @param N_edges number of edges to keep in the output mesh
 */
-	void CGAL_interface(std::string input_path, std::string savepath,
+	void CGAL_interface(const char * input_path, const char * savepath,
 		unsigned int N_edges);
 
 }
