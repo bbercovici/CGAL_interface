@@ -24,7 +24,7 @@
 
 #include "CGAL_interface.hpp"
 
-void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
+void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepath,
     unsigned int N_edges) {
 
     // Poisson options
@@ -38,14 +38,19 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     PointList points;
-    std::ifstream stream(input_path);
+
+    std::string input_path_string(input_path);
+
+
+    std::ifstream stream(input_path_string);
+
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(
             stream,
             std::back_inserter(points),
             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())))
     {
-        throw (std::runtime_error("Error: cannot read file " + input_path));
+        throw (std::runtime_error("Error: cannot read file " + input_path_string));
 
     }
 
@@ -149,11 +154,13 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
         throw (std::runtime_error("Number of vertices equated 0"));
 
     // saves reconstructed surface mesh
-    std::ofstream ofs(savepath);
+    std::string savepath_string(savepath);
+    std::ofstream ofs(savepath_string);
+    std::ofstream ofs_before_decimation("../output/shape_model/apriori.obj");
+
     Polyhedron output_mesh;
     
     CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
-
 
     if ( ! CGAL::Polygon_mesh_processing::is_outward_oriented(output_mesh)) {
         throw (std::runtime_error("Spurious normal orientations in CGAL"));
@@ -165,6 +172,10 @@ void CGALINTERFACE::CGAL_interface(std::string input_path, std::string savepath,
     if (!CGAL::is_triangle_mesh(output_mesh)){
        throw (std::runtime_error("Input geometry is not triangulated."));
    }
+
+
+   CGAL::print_polyhedron_wavefront(ofs_before_decimation, output_mesh);
+
 
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
