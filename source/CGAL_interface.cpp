@@ -154,7 +154,7 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     // saves reconstructed surface mesh
     // std::string savepath_string(savepath);
     std::ofstream ofs(savepath);
-    std::ofstream ofs_before_decimation("../output/shape_model/apriori.obj");
+    std::ofstream ofs_before_decimation("../output/shape_model/apriori_before_decimation.obj");
 
     Polyhedron output_mesh;
     
