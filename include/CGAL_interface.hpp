@@ -87,8 +87,13 @@ to the specified file
 @param savepath path to where the input pointcloud should come from
 @param savepath path to where the file should be saved
 @param N_edges number of edges to keep in the output mesh
+@param sm_angle = 30.0; // Min triangle angle in degrees.
+@param sm_radius = 30; // Max triangle size w.r.t. point set average spacing.
+@param sm_distance = 0.5; // Surface Approximation error w.r.t. point set average spacing.
+
 */
 	void CGAL_interface(const char * input_path, const char * savepath,
-		unsigned int N_edges);
+		unsigned int N_edges,Kernel::FT sm_angle = 30.0,Kernel::FT sm_radius = 30,
+		Kernel::FT sm_distance = 0.5);
 
 }

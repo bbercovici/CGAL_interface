@@ -23,16 +23,14 @@
 
 
 #include "CGAL_interface.hpp"
+#include <chrono>
 
 void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepath,
-    unsigned int N_edges) {
+    unsigned int N_edges,Kernel::FT sm_angle,Kernel::FT sm_radius,Kernel::FT sm_distance) {
 
-    // Poisson options
-    FT sm_angle = 30.0; // Min triangle angle in degrees.
-    FT sm_radius = 30; // Max triangle size w.r.t. point set average spacing.
-    FT sm_distance = 0.5; // Surface Approximation error w.r.t. point set average spacing.
-
+    
     std::cout << " ---  Reading input file... \n";
+    
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
@@ -41,6 +39,8 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
 
 
     std::ifstream stream(input_path);
+    auto start = std::chrono::system_clock::now();
+
 
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(
@@ -52,36 +52,41 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
 
     }
 
-    std::list<PointVectorPair> points_to_orient;
+    auto end = std::chrono::system_clock::now();
 
-    for (auto iter = points.begin(); iter != points.end(); ++iter){
-        points_to_orient.push_back(std::make_pair(iter -> position(),iter -> normal()));
-    }
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout << "Time elapsed reading the file: " << elapsed_seconds.count() << " (s)\n";
+
+    // std::list<PointVectorPair> points_to_orient;
+
+    // for (auto iter = points.begin(); iter != points.end(); ++iter){
+    //     points_to_orient.push_back(std::make_pair(iter -> position(),iter -> normal()));
+    // }
 
     // Orients normals.
     // Note: mst_orient_normals() requires an iterator over points
     // as well as property maps to access each point's position and normal.
-    const int nb_neighbors = 18;
-    std::list<PointVectorPair>::iterator unoriented_points_begin =
-    CGAL::mst_orient_normals(points_to_orient.begin(), points_to_orient.end(),
-       CGAL::First_of_pair_property_map<PointVectorPair>(),
-       CGAL::Second_of_pair_property_map<PointVectorPair>(),
-       nb_neighbors);
+    // const int nb_neighbors = 18;
+    // std::list<PointVectorPair>::iterator unoriented_points_begin =
+    // CGAL::mst_orient_normals(points_to_orient.begin(), points_to_orient.end(),
+    //  CGAL::First_of_pair_property_map<PointVectorPair>(),
+    //  CGAL::Second_of_pair_property_map<PointVectorPair>(),
+    //  nb_neighbors);
 
-    points.clear();
-    std::cout << " ---  Forming point/normal pairs... \n";
+    // points.clear();
+    // std::cout << " ---  Forming point/normal pairs... \n";
 
-    for (auto iter = points_to_orient.begin(); iter != points_to_orient.end(); ++ iter) {
+    // for (auto iter = points_to_orient.begin(); iter != points_to_orient.end(); ++ iter) {
 
-        double x = iter -> first.x();
-        double y = iter -> first.y();
-        double z = iter -> first.z();
+    //     double x = iter -> first.x();
+    //     double y = iter -> first.y();
+    //     double z = iter -> first.z();
 
-        auto normal = iter -> second;
+    //     auto normal = iter -> second;
 
-        points.push_back(Point_with_normal(x,y,z,normal));
+    //     points.push_back(Point_with_normal(x,y,z,normal));
 
-    }
+    // }
 
 
 
@@ -93,6 +98,7 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     // The position property map can be omitted here as we use iterators over Point_3 elements.
 
     std::cout << " ---  Computing the implicit function... \n";
+    start = std::chrono::system_clock::now();
 
     Poisson_reconstruction_function function(points.begin(), points.end(),
         CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()) );
@@ -101,6 +107,16 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     // at each vertex of the triangulation.
     if ( ! function.compute_implicit_function() )
         throw (std::runtime_error("Error in computation of implicit function"));
+
+
+    end = std::chrono::system_clock::now();
+
+    elapsed_seconds = end-start;
+    std::cout << "Time elapsed computing the implicit function: " << elapsed_seconds.count() << " (s)\n";
+    
+
+
+
 
     // Computes average spacing
 
@@ -154,7 +170,7 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     // saves reconstructed surface mesh
     // std::string savepath_string(savepath);
     std::ofstream ofs(savepath);
-    std::ofstream ofs_before_decimation("../output/shape_model/apriori_before_decimation.obj");
+    std::ofstream ofs_before_decimation("../output/apriori_before_decimation.obj");
 
     Polyhedron output_mesh;
     
@@ -168,27 +184,27 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     // The Polyhedron is decimated
 
     if (!CGAL::is_triangle_mesh(output_mesh)){
-       throw (std::runtime_error("Input geometry is not triangulated."));
-   }
+     throw (std::runtime_error("Input geometry is not triangulated."));
+ }
 
 
-   CGAL::print_polyhedron_wavefront(ofs_before_decimation, output_mesh);
+ CGAL::print_polyhedron_wavefront(ofs_before_decimation, output_mesh);
 
 
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
-   SMS::Count_stop_predicate<Polyhedron> stop(N_edges);
+ SMS::Count_stop_predicate<Polyhedron> stop(N_edges);
 
 
 
-   std::cout << " --- Simplifying mesh..." << std::endl;
+ std::cout << " --- Simplifying mesh..." << std::endl;
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface mesh lack an "id()" field.
-   int r = SMS::edge_collapse
-   (output_mesh
+ int r = SMS::edge_collapse
+ (output_mesh
     ,stop
     ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,output_mesh)) 
     .halfedge_index_map  (get(CGAL::halfedge_external_index  ,output_mesh)) 
@@ -196,10 +212,10 @@ void CGALINTERFACE::CGAL_interface(const char * input_path, const char * savepat
     .get_placement(SMS::Midpoint_placement<Polyhedron>())
     );
 
-   std::cout << "\n --- Finished...\n" << r << " edges removed.\n --- " 
-   << (output_mesh.size_of_halfedges()/2) << " final edges.\n" ;
+ std::cout << "\n --- Finished...\n" << r << " edges removed.\n --- " 
+ << (output_mesh.size_of_halfedges()/2) << " final edges.\n" ;
 
-   CGAL::print_polyhedron_wavefront(ofs, output_mesh);
+ CGAL::print_polyhedron_wavefront(ofs, output_mesh);
 
 
 }
